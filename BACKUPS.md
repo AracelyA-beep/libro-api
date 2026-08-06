@@ -10,28 +10,28 @@
 
 | Tipo de respaldo | Frecuencia | Retención |
 | --- | --- | --- |
-| Respaldo automático (Render) | Diario (automático por la plataforma) | 7 días |
+| Respaldo automático (Neon/Vercel) | Diario (automático por la plataforma) | 7 días |
 | Exportación manual (dump SQL) | Semanal (realizado por el administrador) | 30 días |
 | Snapshot de la base de datos | Mensual | 90 días |
 
 ## 3. Lugar de almacenamiento
 
-- Respaldo automático: almacenado internamente por Render en su infraestructura cloud.
+- Respaldo automático: almacenado internamente por Neon/Vercel en su infraestructura cloud.
 - Exportación manual: descargado como archivo .sql y almacenado en Google Drive o almacenamiento local seguro.
-- Snapshot: almacenado en el panel de Render dentro de la sección de la base de datos.
+- Snapshot: almacenado en el panel de Neon/Vercel dentro de la sección de la base de datos.
 
 ## 4. Procedimiento de recuperación ante fallos
 
 ### Escenario A: Datos eliminados accidentalmente
 
-1. Acceder al panel de Render → PostgreSQL → Backups.
+1. Acceder al panel de Neon/Vercel → PostgreSQL → Backups.
 2. Seleccionar el respaldo más reciente anterior al error.
 3. Hacer clic en "Restore" para sobreescribir la base de datos.
 4. Verificar los datos mediante el endpoint GET /api/libros.
 
 ### Escenario B: Corrupción de la base de datos
 
-1. Crear una nueva base de datos PostgreSQL en Render.
+1. Crear una nueva base de datos PostgreSQL en Neon/Vercel.
 2. Actualizar las variables de entorno en el servicio web con las nuevas credenciales.
 3. Importar el dump SQL más reciente usando psql:
 
@@ -39,12 +39,12 @@
 psql -h nueva-host -U nuevo_usuario -d nueva_db < backup.sql
 ```
 
-4. Reiniciar el servicio web desde el panel de Render.
+4. Reiniciar el servicio web desde el panel de Neon/Vercel.
 5. Verificar mediante GET /health y GET /api/libros.
 
-### Escenario C: Pérdida total del servicio en Render
+### Escenario C: Pérdida total del servicio en Neon/Vercel
 
-1. Crear una nueva cuenta o servicio en Render.
+1. Crear una nueva cuenta o servicio en Neon/Vercel.
 2. Conectar el repositorio de GitHub.
 3. Configurar las variables de entorno desde el .env guardado de forma segura.
 4. Crear una nueva base de datos PostgreSQL.
