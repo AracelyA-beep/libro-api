@@ -1,0 +1,58 @@
+name: CI/CD Pipeline - Libros API
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Validar sintaxis (lint básico)
+        run: node -e "require('./src/app.js')"
+
+      - name: Ejecutar tests
+        run: npm test
+
+      - name: Verificar estructura del proyecto
+        run: |
+          echo "Verificando archivos clave..."
+          test -f src/app.js && echo "app.js: OK"
+          test -f .env.example && echo ".env.example: OK"
+          test -f package.json && echo "package.json: OK"
+          echo "Estructura validada correctamente"
+
+  deploy-notification:
+    needs: build-and-validate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Notificar despliegue
+        run: |
+          echo "============================================"
+          echo "Pipeline completado exitosamente"
+          echo "Render detectará el push y desplegará"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Autor: ${{ github.actor }}"
+          echo "Fecha: $(date -u)"
+          echo "============================================"
