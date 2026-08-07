@@ -22,8 +22,8 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
-      - name: Validar sintaxis del proyecto
-        run: node -e "require('./src/app.js')"
+      - name: Validar sintaxis
+        run: node --check src/app.js
 
       - name: Ejecutar tests
         run: npm test
